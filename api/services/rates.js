@@ -3,6 +3,7 @@
 const axios = require('axios').default;
 
 const RateDetail = require('../domain/ratesDetail')
+const Exceptions = require('../domain/exceptions')
 
 
 class RateService {
@@ -42,13 +43,20 @@ class RateService {
   getRate = async (baseCurrency, targetCurrency) => {
     const rate = await this.rateRepository.getRatesByPair(baseCurrency, targetCurrency);
 
-    const Response = new RateDetail(
-      baseCurrency,
-      targetCurrency,
-      rate.originalRate,
-      rate.feePercentage,
-    );
-    return Response.toDto();
+    if (rate && Object.keys(rate).length > 0){
+      const Response = new RateDetail(
+        baseCurrency,
+        targetCurrency,
+        rate.originalRate,
+        rate.feePercentage,
+      );
+      return Response.toDto();
+    }
+    else{
+      throw new Exceptions.NotFound('Pair was not found')
+    } 
+
+
   };
 
   updateRates = async () => {

@@ -3,6 +3,7 @@ const Joi = require('joi');
 
 const RateService = require("../services/rates")
 const RateRepository = require("../repositories/rates")
+const Exceptions = require('../domain/exceptions')
 
 const rateRepository = new RateRepository()
 const rateService = new RateService(rateRepository)
@@ -28,9 +29,22 @@ const getRate ={
 
     let baseCurrency = req.query.base
     let targetCurrency = req.query.target
-    let response = await rateService.getRate(baseCurrency, targetCurrency);
 
-    return res.response(response).code(200)
+    try {
+
+      let response = await rateService.getRate(baseCurrency, targetCurrency);
+      return res.response(response).code(200)
+
+    }
+    catch (e){
+
+      if (e instanceof Exceptions.Exception ){
+        console.error(e.toString())
+        return res.response(e.message).code(e.statusCode)
+      }
+
+      throw e
+    }
   },
   options: {
     tags: ['api'],

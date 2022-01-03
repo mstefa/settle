@@ -19,7 +19,7 @@ const RateDetail = require('../../api/domain/ratesDetail')
 // expect(mockCallback.mock.results[0].value).toBe(42);
 
 describe('rate controller', () => {
-  it('rates', async () => {
+  it('Succesfu', async () => {
     // given
     let entity = {
       baseCurrency: 'USD',
@@ -43,12 +43,8 @@ describe('rate controller', () => {
     const rateService = new RateService( repositoryMock )
     let response = await rateService.getRate("USD", "ARS")
 
-    // console.log(repositoryMock.getRatesByPair.mock.calls[0])
-
     //assert
     expect(response).to.deep.equal(expected);
-    // expect(repositoryMock.getRatesByPair.mock.calls.length).toBe(2)
-
 
   });
 });
