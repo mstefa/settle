@@ -3,9 +3,11 @@ const Joi = require('joi');
 
 const RateService = require('../services/rates');
 const RateRepository = require('../repositories/rates');
+const Rates = require('../repositories/entity/rates');
 const Exceptions = require('../domain/exceptions');
 
-const rateRepository = new RateRepository();
+
+const rateRepository = new RateRepository(Rates);
 const rateService = new RateService(rateRepository);
 
 const responseModel = Joi.object({
@@ -32,6 +34,7 @@ const getRate = {
     try {
       let response = await rateService.getRate(baseCurrency, targetCurrency);
       return res.response(response).code(200);
+      
     } catch (e) {
       if (e instanceof Exceptions.Exception) {
         console.error(e.toString());

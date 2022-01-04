@@ -1,22 +1,14 @@
 'use strict';
 
-const Rates = require('./entity/rates');
-
-// const USDARS = new Rates({
-// baseCurrency: "USD",
-// targetCurrency: "ARS",
-// originalRate: 1,
-// feePercentage: 0.1,
-// feeAmount: 0.1,
-// finalRate: 1.1
-// });
-// USDARS.save().then((e) => console.log(e));
+// const Rates = require('./entity/rates');
 
 class RateRepository {
-  constructor() {}
+  constructor(rates) {
+    this.Rates = rates
+  }
 
   getRatesByPair = async (baseCurrency, targetCurrency) => {
-    const rate = await Rates.findOne({
+    const rate = await this.Rates.findOne({
       baseCurrency: baseCurrency,
       targetCurrency: targetCurrency,
     });
@@ -25,7 +17,7 @@ class RateRepository {
   };
 
   updateRate = async (rateDetail) => {
-    const res = await Rates.updateOne(
+    const res = await this.Rates.updateOne(
       { baseCurrency: rateDetail.pair.base, targetCurrency: rateDetail.pair.target },
       { originalRate: rateDetail.originalRate, feePercentage: rateDetail.feePercentage }
     );
@@ -33,7 +25,7 @@ class RateRepository {
   };
 
   createRate = async (rateDetail) => {
-    const res = await Rates.updateOne(
+    const res = await this.Rates.updateOne(
       { baseCurrency: rateDetail.pair.base, targetCurrency: rateDetail.pair.target },
       { originalRate: rateDetail.originalRate, feePercentage: rateDetail.feePercentage },
       { upsert: true }
@@ -42,10 +34,5 @@ class RateRepository {
     return res;
   };
 }
-// const rateRepository = {
-//   getRatesByPair,
-//   updateRate,
-//   createRate
-// };
 
 module.exports = RateRepository;

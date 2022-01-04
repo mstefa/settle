@@ -18,7 +18,6 @@ class RateService {
       const rate = await this.rateRepository.getRatesByPair(newRates[i].baseCurrency, newRates[i].targetCurrency);
 
       if (!rate){
-      console.log(newRates[i].baseCurrency)
       let rateDetail = new RateDetail(
         newRates[i].baseCurrency,
         newRates[i].targetCurrency,
@@ -27,7 +26,6 @@ class RateService {
         );
 
         const update = await this.rateRepository.createRate(rateDetail);
-        console.log(`update`, update)
       }
     }
   }
@@ -53,6 +51,7 @@ class RateService {
         rate.originalRate,
         rate.feePercentage,
       );
+
       return Response.toDto();
     }
     else{
