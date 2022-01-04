@@ -39,10 +39,19 @@ class InternalServerError extends Exception {
   }
 }
 
+class BadGateway extends Exception {
+  constructor(message) {
+    super(message, 502); 
+    this.name = "BadGateway";
+  }
+}
+
 Exceptions = {
   Exception,
   Error,
   BadRequest,
+  InternalServerError,
+  BadGateway,
   NotFound
 }
 

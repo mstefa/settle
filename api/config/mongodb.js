@@ -3,11 +3,10 @@
 // Dependencies
 const Mongoose = require("mongoose");
 
-
 // Parameters
-const dbHost = "localhost"
-const dbPort = "27017"
-const dbSchema = "settle"
+const dbHost = process.env.DB_HOST
+const dbPort = process.env.DB_PORT
+const dbSchema = process.env.DB_SCHEMA
 
 
 Mongoose.connect("mongodb://"  + dbHost + ":" + dbPort+ "/" + dbSchema);

@@ -1,4 +1,5 @@
 `use strict`;
+require('dotenv').config()
 
 const { start } = require('./api/config/server');
 const RateController = require('./api/controllers/rates.js');

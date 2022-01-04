@@ -42,20 +42,23 @@ class RateService {
   };
 
   updateRates = async () => {
-    let updatedRates = {
-      success: true,
-      timestamp: 1640816643,
-      base: 'EUR',
-      date: '2021-12-29',
-      rates: { USD: 1.134816, ARS: 116.482601, BRL: 6.472535 },
-    };
-    // try {
-    //     updatedRates= await axios.get('http://data.fixer.io/api/latest?access_key=e6f2479f26b0ef8020ea0cd30c5e9608&symbols=USD,ARS,BRL');
 
-    // } catch (error) {
-    //   console.info(error);
-    // }
+    let updatedRates;
 
+    try {
+      
+        let externalResponse = await axios.get(`http://data.fixer.io/api/latest?access_key=${process.env.API_KEY}&symbols=USD,ARS,BRL`);
+        updatedRates = externalResponse.data
+
+    } catch (e) {
+      const apiError = new Exceptions.BadGateway(
+        'Extenal service is not responding'
+      );
+      console.info(apiError.toString());
+      console.info(e);
+      throw apiError;
+    }
+    console.log(updatedRates)
     let ratesCalculation = [
       {
         baseCurrency: 'EUR',
