@@ -6,7 +6,6 @@ const RateRepository = require('../repositories/rates');
 const Rates = require('../repositories/entity/rates');
 const Exceptions = require('../domain/exceptions');
 
-
 const rateRepository = new RateRepository(Rates);
 const rateService = new RateService(rateRepository);
 
