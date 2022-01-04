@@ -127,7 +127,6 @@ class RateService {
         console.info(e);
         throw apiError;
       }
-
       response.push(rateDetail.toDto());
     }
 
@@ -142,8 +141,8 @@ class RateService {
 
     if (rate && Object.keys(rate).length > 0) {
       const updatedRate = new RateDetail(
-        baseCurrency,
-        targetCurrency,
+        feeUpdate.baseCurrency,
+        feeUpdate.targetCurrency,
         rate.originalRate,
         feeUpdate.newFeePercentage
       );
@@ -158,7 +157,6 @@ class RateService {
         console.info(e);
         throw apiError;
       }
-
       return updatedRate.toDto();
     } else {
       const apiError = new Exceptions.NotFound(

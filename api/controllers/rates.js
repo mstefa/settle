@@ -17,8 +17,8 @@ const responseModel = Joi.object({
 
 const responseArray = Joi.array().items(responseModel);
 
-class RateController{
-  constructor(rateService){
+class RateController {
+  constructor(rateService) {
     this.rateService = rateService;
 
     this.getRate = {
@@ -27,15 +27,13 @@ class RateController{
       handler: async (req, res) => {
         let baseCurrency = req.query.base;
         let targetCurrency = req.query.target;
-    
+
         try {
           let response = await rateService.getRate(baseCurrency, targetCurrency);
           return res.response(response).code(200);
-          
         } catch (e) {
           if (e instanceof Exceptions.Exception) {
-            console.error(e.toString());
-            return res.response(e.message).code(e.statusCode);
+            return res.response(e.toDto()).code(e.statusCode);
           }
           throw e;
         }
@@ -44,8 +42,8 @@ class RateController{
         tags: ['api'],
         validate: {
           query: Joi.object({
-            base: Joi.string().valid('USD', 'EUR', 'BRL').required(),
-            target: Joi.string().valid('USD', 'BRL', 'ARS').required(),
+            base: Joi.string().regex(/[A-Z]{2,4}/).required(),
+            target: Joi.string().regex(/[A-Z]{2,4}/).required(),
           }),
         },
         response: {
@@ -54,7 +52,7 @@ class RateController{
         },
       },
     };
-    
+
     this.updateRates = {
       method: 'PATCH',
       path: '/rates',
@@ -64,7 +62,7 @@ class RateController{
           return res.response(response).code(201);
         } catch (e) {
           if (e instanceof Exceptions.Exception) {
-            return res.response(e.message).code(e.statusCode);
+            return res.response(e.toDto()).code(e.statusCode);
           }
           throw e;
         }
@@ -74,18 +72,23 @@ class RateController{
         response: {
           failAction: 'log',
           schema: responseArray,
-        }
+        },
       },
     };
-    
+
     this.updateFee = {
       method: 'PATCH',
       path: '/fees',
       handler: async (req, res) => {
-    
-        let response = await rateService.updateFees(req.payload);
-    
-        return res.response(response).code(201);
+        try {
+          let response = await rateService.updateFees(req.payload);
+          return res.response(response).code(201);
+        } catch (e) {
+          if (e instanceof Exceptions.Exception) {
+            return res.response(e.toDto()).code(e.statusCode);
+          }
+          throw e;
+        }
       },
       options: {
         tags: ['api'],
@@ -94,23 +97,19 @@ class RateController{
           schema: responseArray,
         },
         validate: {
-          payload: Joi.array().items(
-            Joi.object({
-              baseCurrency: Joi.string().required(),
-              targetCurrency: Joi.string().required(),
-              newFeePercentage: Joi.number().required(),
-            }).required()
-          )
-          }
+          payload: Joi.object({
+            baseCurrency: Joi.string().required(),
+            targetCurrency: Joi.string().required(),
+            newFeePercentage: Joi.number().required(),
+          }).required(),
+        },
       },
     };
   }
 
   getControllers() {
-    return [this.getRate, this.updateRates, this.createRates]
+    return [this.getRate, this.updateRates, this.updateFee];
   }
 }
 
 module.exports = RateController;
-
-

@@ -8,6 +8,14 @@ class Exception extends Error {
   toString(){
     return('Code: ' + this.statusCode + '-' + this.name +'  Message: ' + this.message)
   }
+
+  toDto(){
+    return {
+      "statusCode": this.statusCode,
+      "error": this.name ,
+      "message": this.message
+    }
+  }
 }
 
 class BadRequest extends Exception {
@@ -32,6 +40,7 @@ class InternalServerError extends Exception {
 }
 
 Exceptions = {
+  Exception,
   Error,
   BadRequest,
   NotFound
