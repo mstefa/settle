@@ -6,8 +6,6 @@ const Vision = require('@hapi/vision');
 const HapiSwagger = require('hapi-swagger');
 const laabr = require('laabr');
 
-const RateRoutes = require('../controllers/rates.js');
-
 const swaggerOptions = {
   info: {
     title: 'Settle API',
@@ -47,16 +45,18 @@ server.route({
   },
 });
 
-// API Routes 
-server.route(RateRoutes);
 
-exports.init = async () => {
+exports.init = async (RoutesControllers) => {
+  // API Routes 
+  server.route(RoutesControllers);
   await registerPlugings()
   await server.initialize();
   return server;
 };
 
-exports.start = async () => {
+exports.start = async (RoutesControllers) => {
+  // API Routes 
+  server.route(RoutesControllers);
   await registerPlugings()
   await server.start();
   console.log('Server running on %s', server.info.uri);
