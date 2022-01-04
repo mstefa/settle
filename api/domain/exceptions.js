@@ -24,6 +24,13 @@ class NotFound extends Exception {
   }
 }
 
+class InternalServerError extends Exception {
+  constructor(message) {
+    super(message, 500); 
+    this.name = "InternalServerError";
+  }
+}
+
 Exceptions = {
   Error,
   BadRequest,

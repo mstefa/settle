@@ -11,19 +11,11 @@ class RateService {
     this.rateRepository = rateRepository;
   }
 
-  createRates = async () => {
-
-    let newRates = [{
-      baseCurrency: 'EUR',
-      targetCurrency: 'USD',
-      originalRate: 10,
-      feePercentage: 0.1
-    }]
+  createRates = async (newRates) => {
 
     for (let i = 0; i < newRates.length; i++){
 
       const rate = await this.rateRepository.getRatesByPair(newRates[i].baseCurrency, newRates[i].targetCurrency);
-      console.log(rate)
 
       if (!rate){
       console.log(newRates[i].baseCurrency)
@@ -33,7 +25,7 @@ class RateService {
         newRates[i].originalRate,
         newRates[i].feePercentage,
         );
-        console.log("writting", rateDetail)
+
         const update = await this.rateRepository.createRate(rateDetail);
         console.log(`update`, update)
       }
@@ -41,8 +33,19 @@ class RateService {
   }
 
   getRate = async (baseCurrency, targetCurrency) => {
-    const rate = await this.rateRepository.getRatesByPair(baseCurrency, targetCurrency);
 
+    let rate;
+    try {
+
+      rate = await this.rateRepository.getRatesByPair(baseCurrency, targetCurrency);
+    
+    }catch (e){
+      const apiError = new Exceptions.InternalServerError('Error getting pair: ' + baseCurrency + targetCurrency)
+      console.error(apiError.toString());
+      console.error(e)
+      throw apiError
+    }
+    
     if (rate && Object.keys(rate).length > 0){
       const Response = new RateDetail(
         baseCurrency,
@@ -53,10 +56,10 @@ class RateService {
       return Response.toDto();
     }
     else{
-      throw new Exceptions.NotFound('Pair was not found')
+      const apiError = new Exceptions.NotFound('Pair '+ baseCurrency + targetCurrency + ' was not found')
+      console.info(apiError.toString());
+      throw apiError
     } 
-
-
   };
 
   updateRates = async () => {

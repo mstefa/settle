@@ -1,15 +1,15 @@
 'use strict';
 const Joi = require('joi');
 
-const RateService = require("../services/rates")
-const RateRepository = require("../repositories/rates")
-const Exceptions = require('../domain/exceptions')
+const RateService = require('../services/rates');
+const RateRepository = require('../repositories/rates');
+const Exceptions = require('../domain/exceptions');
 
-const rateRepository = new RateRepository()
-const rateService = new RateService(rateRepository)
+const rateRepository = new RateRepository();
+const rateService = new RateService(rateRepository);
 
 const responseModel = Joi.object({
-  name : Joi.string(),
+  name: Joi.string(),
   pair: Joi.object({
     base: Joi.string(),
     target: Joi.string(),
@@ -20,88 +20,90 @@ const responseModel = Joi.object({
   finalRate: Joi.number().max(101),
 }).label('Result');
 
-const responseArray = Joi.array().items(responseModel)
+const responseArray = Joi.array().items(responseModel);
 
-const getRate ={
+const getRate = {
   method: 'GET',
   path: '/rate',
-  handler: async (req, res)  => {
-
-    let baseCurrency = req.query.base
-    let targetCurrency = req.query.target
+  handler: async (req, res) => {
+    let baseCurrency = req.query.base;
+    let targetCurrency = req.query.target;
 
     try {
-
       let response = await rateService.getRate(baseCurrency, targetCurrency);
-      return res.response(response).code(200)
-
-    }
-    catch (e){
-
-      if (e instanceof Exceptions.Exception ){
-        console.error(e.toString())
-        return res.response(e.message).code(e.statusCode)
+      return res.response(response).code(200);
+    } catch (e) {
+      if (e instanceof Exceptions.Exception) {
+        console.error(e.toString());
+        return res.response(e.message).code(e.statusCode);
       }
-
-      throw e
+      throw e;
     }
   },
   options: {
     tags: ['api'],
     validate: {
       query: Joi.object({
-        base: Joi.string().valid('USD', 'EUR', 'BRL').required(), 
-        target: Joi.string().valid('USD', 'BRL', 'ARS').required(), 
+        base: Joi.string().valid('USD', 'EUR', 'BRL').required(),
+        target: Joi.string().valid('USD', 'BRL', 'ARS').required(),
       }),
     },
-    response:{
+    response: {
       failAction: 'log',
-      schema: responseModel
-    }
+      schema: responseModel,
+    },
   },
 };
 
-
-const updateRates ={
+const updateRates = {
   method: 'PATCH',
   path: '/rates',
-  handler: async ( _ , res)  => {
-
-    let response = await rateService.updateRates();
-
-    return res.response(response).code(201)
+  handler: async (_, res) => {
+    try {
+      let response = await rateService.updateRates();
+      return res.response(response).code(201);
+    } catch (e) {
+      if (e instanceof Exceptions.Exception) {
+        return res.response(e.message).code(e.statusCode);
+      }
+      throw e;
+    }
   },
   options: {
     tags: ['api'],
-    response:{
+    response: {
       failAction: 'log',
-      schema: responseArray
+      schema: responseArray,
     }
   },
 };
 
-
-const createRates ={
+const createRates = {
   method: 'POST',
   path: '/rates',
-  handler: async ( _ , res)  => {
+  handler: async (req, res) => {
 
-    let response = await rateService.createRates();
+    let response = await rateService.createRates(req.payload);
 
-    return res.response(response).code(201)
+    return res.response(response).code(201);
   },
   options: {
     tags: ['api'],
-    response:{
+    response: {
       failAction: 'log',
-      schema: responseArray
-    }
+      schema: responseArray,
+    },
+    validate: {
+      payload: Joi.array().items(
+        Joi.object({
+          baseCurrency: Joi.string().required(),
+          targetCurrency: Joi.string().required(),
+          originalRate: Joi.number().required(),
+          feePercentage: Joi.number().required(),
+        }).required()
+      )
+      }
   },
 };
 
-module.exports = [
-  getRate,
-  updateRates,
-  createRates,
-]
-
+module.exports = [getRate, updateRates, createRates];

@@ -4,6 +4,7 @@ const Hapi = require('@hapi/hapi');
 const Inert = require('@hapi/inert');
 const Vision = require('@hapi/vision');
 const HapiSwagger = require('hapi-swagger');
+const laabr = require('laabr');
 
 
 const RateRoutes = require('./api/controllers/rates.js')
@@ -29,7 +30,12 @@ const init = async () => {
       plugin: HapiSwagger,
       options: swaggerOptions,
     },
+    {
+      plugin: laabr,
+      options: {},
+    }
   ]);
+
 
     //Default Route
     server.route({
