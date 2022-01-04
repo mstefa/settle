@@ -12,19 +12,14 @@ jest.setTimeout(10000);
 describe('GET /rate', () => {
   let server;
 
-  afterEach(async () => {
-    await server.stop();
-  });
-
-  it('succesful path', async () => {
-    //given
+  beforeAll(async () => {
     let entityResponse = {
       baseCurrency: 'USD',
       targetCurrency: 'ARS',
       originalRate: 1,
       feePercentage: 0.1,
     };
-
+    
     let entityMock = {
       findOne: jest.fn(() => entityResponse),
     };
@@ -33,7 +28,17 @@ describe('GET /rate', () => {
     const rateController = new RateController(rateService);
 
     server = await init(rateController.getControllers());
+  });
 
+  afterAll(async () => {
+    await server.stop();
+  });
+
+  it('succesful path', async () => {
+    //given
+    let expected =
+      '{"name":"USDARS","pair":{"base":"USD","target":"ARS"},"originalRate":1,"feePercentage":0.1,"feeAmount":0.1,"finalRate":1.1}';
+    
     //when
     const res = await server.inject({
       method: 'GET',
@@ -41,9 +46,19 @@ describe('GET /rate', () => {
     });
 
     //expect
-    let expected =
-      '{"name":"USDARS","pair":{"base":"USD","target":"ARS"},"originalRate":1,"feePercentage":0.1,"feeAmount":0.1,"finalRate":1.1}';
-    expect(res.payload).to.deep.equal(expected);
     expect(res.statusCode).to.equal(200);
+    expect(res.payload).to.deep.equal(expected);
+  });
+
+  it('responds 400 when the request do not follow requirement', async () => {
+
+    //when
+    const res = await server.inject({
+      method: 'GET',
+      url: '/rate?base=BADREQUEST&target=ARS',
+    });
+
+    //expect
+    expect(res.statusCode).to.equal(400);
   });
 });
