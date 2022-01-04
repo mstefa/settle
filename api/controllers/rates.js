@@ -84,12 +84,12 @@ class RateController{
       },
     };
     
-    this.createRates = {
+    this.updateFee = {
       method: 'PATCH',
       path: '/fees',
       handler: async (req, res) => {
     
-        let response = await rateService.createRates(req.payload);
+        let response = await rateService.updateFees(req.payload);
     
         return res.response(response).code(201);
       },
@@ -104,8 +104,7 @@ class RateController{
             Joi.object({
               baseCurrency: Joi.string().required(),
               targetCurrency: Joi.string().required(),
-              originalRate: Joi.number().required(),
-              feePercentage: Joi.number().required(),
+              newFeePercentage: Joi.number().required(),
             }).required()
           )
           }
