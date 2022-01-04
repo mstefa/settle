@@ -19,7 +19,8 @@ class RateRepository {
   updateRate = async (rateDetail) => {
     const res = await this.Rates.updateOne(
       { baseCurrency: rateDetail.pair.base, targetCurrency: rateDetail.pair.target },
-      { originalRate: rateDetail.originalRate, feePercentage: rateDetail.feePercentage }
+      { originalRate: rateDetail.originalRate, feePercentage: rateDetail.feePercentage },
+      { upsert: true }
     );
     return res;
   };

@@ -114,30 +114,33 @@ class RateService {
     for (let i = 0; i < ratesCalculation.length; i++){
 
       const rate = await this.rateRepository.getRatesByPair(ratesCalculation[i].baseCurrency, ratesCalculation[i].targetCurrency);
+      let rateDetail
 
       if (rate && Object.keys(rate).length > 0){
 
-        let rateDetail = new RateDetail(
+        rateDetail = new RateDetail(
           ratesCalculation[i].baseCurrency,
           ratesCalculation[i].targetCurrency,
-          ratesCalculation[i].originalRate,
-          ratesCalculation[i].feePercentage,
+          rate.originalRate,
+          rate.feePercentage,
           );
+        }
+        else {
+
+          rateDetail = new RateDetail(
+            ratesCalculation[i].baseCurrency,
+            ratesCalculation[i].targetCurrency,
+            0,
+            0,
+            );
+          
+        }
 
         rateDetail.updateOriginalRate(ratesCalculation[i].rate)
         
         const update = await this.rateRepository.updateRate(rateDetail);
 
-        // error handler
-
         response.push(rateDetail.toDto())  
-
-        }
-        else {
-
-          response.push({pair: ratesCalculation[i].baseCurrency + ratesCalculation[i].targetCurrency, error: "this can not be updated"} )
-          
-        }
     };
 
     return response;

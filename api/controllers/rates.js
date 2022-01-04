@@ -85,8 +85,8 @@ class RateController{
     };
     
     this.createRates = {
-      method: 'POST',
-      path: '/rates',
+      method: 'PATCH',
+      path: '/fees',
       handler: async (req, res) => {
     
         let response = await rateService.createRates(req.payload);
