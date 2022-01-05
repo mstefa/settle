@@ -9,7 +9,9 @@ const dbPort = process.env.DB_PORT
 const dbSchema = process.env.DB_SCHEMA
 
 
-Mongoose.connect("mongodb://"  + dbHost + ":" + dbPort+ "/" + dbSchema);
+Mongoose.connect(
+    "mongodb://"  + dbHost + ":" + dbPort+ "/" + dbSchema
+    );
 
 const db = Mongoose.connection;
 db.on("error", console.error.bind(console, "Connection error"));

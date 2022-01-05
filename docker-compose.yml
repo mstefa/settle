@@ -1,0 +1,26 @@
+version: '3'
+services:
+  node:
+    restart: always
+    build: .
+    environment:
+      - DB_HOST=mongo
+      - DB_PORT=27017
+      - DB_SCHEMA=settle
+      - API_KEY=e6f2479f26b0ef8020ea0cd30c5e9608
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=3000
+    ports:
+      - 80:3000
+    depends_on:
+      - mongo
+    volumes:
+      - ./:/code
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+volumes:
+  mongodb:
