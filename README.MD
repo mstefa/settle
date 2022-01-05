@@ -9,7 +9,7 @@ docker-compose up -d --build
 ```
 The server will be listening at 0.0.0.0:80
 
-Documentation about the endpoints will be available at http://0.0.0.0/documentation/. 
+Documentation about the endpoints will be available at http://0.0.0.0/documentation. 
 Please, in order to populate the DB, use a first request  PATCH http://0.0.0.0/rates PostmanDockerCollection is provided to test these endpoints.
 
 
