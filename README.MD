@@ -10,7 +10,10 @@ docker-compose up -d --build
 The server will be listening at 0.0.0.0:80
 
 Documentation about the endpoints will be available at http://0.0.0.0/documentation. 
-Please, in order to populate the DB, use a first request  PATCH http://0.0.0.0/rates PostmanDockerCollection is provided to test these endpoints.
+
+Please, in order to populate the DB, before test other routes send a PATCH request to  PATCH http://0.0.0.0/rates .
+
+PostmanDockerCollection is provided to test these endpoints.
 
 
 ## Run project on local
@@ -25,7 +28,11 @@ npm start
 
 The server will be listening at 127.0.0.1:3000
 
-Documentation about the endpoints will be available at http://127.0.0.1:3000/documentation. Please, in order to populate the DB, use a first request  PATCH http://127.0.0.1:3000/rates  PostmanLocalCollection is provided to test these endpoints. 
+Documentation about the endpoints will be available at http://127.0.0.1:3000/documentation. 
+
+Please, in order to populate the DB, before test other routes send a PATCH request to http://127.0.0.1:3000/rates .
+  
+PostmanLocalCollection is provided to test these endpoints. 
 
 To run test
 
