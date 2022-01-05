@@ -42,8 +42,8 @@ class RateController {
         tags: ['api'],
         validate: {
           query: Joi.object({
-            base: Joi.string().regex(/[A-Z]{2,4}/).required(),
-            target: Joi.string().regex(/[A-Z]{2,4}/).required(),
+            base: Joi.string().regex(/[A-Z]{2,4}/).min(2).max(4).required(),
+            target: Joi.string().regex(/[A-Z]{2,4}/).min(2).max(4).required(),
           }),
         },
         response: {
